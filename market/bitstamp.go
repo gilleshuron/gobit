@@ -17,7 +17,14 @@ type Bitstamp struct {
 	Books  chan model.Book
 }
 
-func (b *Bitstamp) Start() {
+func NewBitstamp() Bitstamp {
+	return Bitstamp{
+		Trades: make(chan model.Trade),
+		Books:  make(chan model.Book),
+	}
+}
+
+func (b *Bitstamp) Run() {
 	LOG := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 	client, err := pusher.Connect("de504dc5763aeef9ff52")
@@ -27,9 +34,6 @@ func (b *Bitstamp) Start() {
 		return
 	}
 	LOG.Printf("%s Connected", name)
-
-	b.Trades = make(chan model.Trade)
-	b.Books = make(chan model.Book)
 
 	previousTrade := model.Trade{}
 
