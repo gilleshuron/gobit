@@ -1,33 +1,41 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/gilleshuron/gobit/market"
 	"github.com/gilleshuron/gobit/web"
 
-	// "github.com/gilleshuron/gobit/model"
-	"log"
+	"github.com/gilleshuron/gobit/model"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
 func main() {
-	LOG := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	m := market.NewBitstamp()
 	w := web.NewWeb()
+
 	h := web.H()
 	go h.Run()
+
+	var m model.Market
+	m = market.NewBitstamp()
+	h.RegisterMarket <- m
 	go m.Run()
+
 	go w.Run()
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, syscall.SIGTERM)
+	go func() {
+		<-c
+		panic("Show me the stack:")
+		os.Exit(1)
+	}()
+
 	for {
 		select {
-		case trade := <-m.Trades:
-			LOG.Printf("%s %s. Price:%.2f$ Amount:%.2fBTC Id:%d", trade.Market, trade.Move, trade.Price, trade.Amount, trade.Id)
-			j, _ := json.Marshal(trade)
-			h.Broadcast <- j
-		case <-m.Books:
-			// LOG.Printf("%s Bids: %v Asks: %v ", book.Market, book.Bids, book.Asks)
 		default:
 			time.Sleep(10 * time.Millisecond)
 		}

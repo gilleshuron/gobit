@@ -1,32 +1,3 @@
-// package web
-
-// import (
-// 	// "fmt"
-// 	"log"
-// 	"net/http"
-// 	"os"
-// )
-
-// type Web struct {
-// 	ip   string
-// 	port string
-// }
-
-// const (
-// 	name string = "Web"
-// )
-
-// func NewWeb() Web {
-// 	return Web{ip: "localhost", port: ":8080"}
-// }
-
-// func (w *Web) Start() {
-// 	LOG := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-// 	LOG.Printf("%s Listening on %s%s", name, w.ip, w.port)
-// 	http.Handle("/ws", websocket.Handler(onConnected))
-// 	http.ListenAndServe(":8080", http.FileServer(http.Dir("./web/static")))
-// }
-
 package web
 
 import (
